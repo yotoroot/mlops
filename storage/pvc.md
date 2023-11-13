@@ -24,7 +24,7 @@ Please refer to [Kserve's link] https://kserve.github.io/website/0.11/modelservi
 Modification has been made to the environment setup different.
 - use kubeflow-user-example-com as namespace, so that volume and model can be seen in the kubeflow's dashboard. 
 
-
+create the pv-and-pvc.yaml
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -58,7 +58,29 @@ spec:
 kubectl apply -f pv-and-pvc.yaml -n kubeflow-user-example-com
 ```
 
+create the model-store-pod.yaml
 ```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: model-store-pod
+spec:
+  volumes:
+    - name: model-store
+      persistentVolumeClaim:
+        claimName: task-pv-claim
+  containers:
+    - name: model-store
+      image: ubuntu
+      command: [ "sleep" ]
+      args: [ "infinity" ]
+      volumeMounts:
+        - mountPath: "/pv"
+          name: model-store
+      resources:
+        limits:
+          memory: "60Gi"
+          cpu: "1"
 
 ```
 
@@ -66,8 +88,52 @@ kubectl apply -f pv-and-pvc.yaml -n kubeflow-user-example-com
 kubectl exec -it model-store-pod -n kubeflow-user-example-com -- bash
 ~~~
 
-### Test the inference outside the k8s Cluster
+### Preparing the model
+Download the sklearn iris pretrained model. Take note that it has to be a raw or binary format
+~~~bash
+wget https://github.com/kserve/kserve/raw/master/python/sklearnserver/sklearnserver/example_models/joblib/model/model.joblib
+~~~
+copy the model to the PVC
+~~~kubectl
+kubectl cp model.joblib model-store-pod:/pv/model.joblib -c model-store -n kubeflow-user-example-com
+~~~
+in the model-store-pod container, you should be able to see the model.joblib.
+~~~bash
+root@model-store-pod:/pv# ls -l
+total 8
+-rw-r--r-- 1 1002 1000 5671 Nov 14 19:17 model.joblib
+~~~
 
+and other useful commands
+~~~
+kubectl get pvc -n kubeflow-user-example-com
+kubectl get pv -n kubeflow-user-example-com
+~~~
+
+### Setup the inference serving sklearn-pvc.yaml
+~~~yaml
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "sklearn-pvc"
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: sklearn
+      storageUri: "pvc://task-pv-claim/model.joblib"
+~~~
+start the service and wait for few mins, you can also observe the endpoint in the kubeflow->endpoint the status of sklearn-pvc model serving status.
+~~~bash
+kubectl apply -f sklearn-pvc.yaml -n kubeflow-user-example-com
+~~~
+
+### Test the inference outside the k8s Cluster
+The SERVICE_HOSTNAME can be found executing this in the k8s cluster head node
+~~~bash
+export SERVICE_HOSTNAME=$(kubectl get inferenceservice sklearn-pvc -n kubeflow-user-example-com -o jsonpath='{.status.url}' | cut -d "/" -f 3)
+~~~
+Outside of the k8s cluster, triggering the inference using Curl
 ~~~bash
 export MODEL_NAME=sklearn-pvc
 export SERVICE_HOSTNAME=sklearn-pvc.kubeflow-user-example-com.example.com
