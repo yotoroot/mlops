@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Persistent Volume (PV) and PVC (Persistent Volume)
-parent: storage
+parent: Storage
 nav_order: 1
 ---
 
