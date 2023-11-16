@@ -1,6 +1,6 @@
 ---
 layout: default
-title: PVC and PV setup for Kubeflow
+title: Kubeflow PVC Setup 
 parent: Storage
 nav_order: 1
 ---
