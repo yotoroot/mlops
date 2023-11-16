@@ -18,7 +18,7 @@ nav_order: 1
 
 ## Persistent volume (PV) & Persistent volume claim (PVC)
 
-### Crete PV and PVC in the kubeflow
+### Create PV and PVC in the kubeflow
 
 Please refer to [Kserve's link] https://kserve.github.io/website/0.11/modelserving/storage/pvc/pvc/ 
 Modification has been made to the environment setup different.
