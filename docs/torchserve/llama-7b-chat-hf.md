@@ -397,7 +397,7 @@ Device 0 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.000 kB/s
 
 ### Manual Scaling
 Enable replicas=13
-
+~~~
 ~~~bash
 user8@bcm10-headnode:~/kfp/llama$ hey -z 160s -c 800 -m POST -host ${SERVICE_HOSTN
 AME} -H "Content-Type: application/json"   -H "Cookie: authservice_session=${SESSI
@@ -448,6 +448,7 @@ Status code distribution:
 
 Error distribution:
   [322] Post http://10.149.8.3:8008/v1/models/llama7b:predict: net/http: request canceled (Client.Timeout exceeded while awaiting headers)
+~~~
 
 ~~~bash
    Device 0 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.00
@@ -560,3 +561,4 @@ Device 0 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.000 k
  Device 7 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.000 k
  GPU 1155MHz MEM 1593MHz TEMP  39°C FAN N/A% POW  76 / 400 W
  GPU[                               0%] MEM[||||                  11.1G/85.
+ ~~~
