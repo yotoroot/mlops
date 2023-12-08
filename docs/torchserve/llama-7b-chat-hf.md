@@ -449,7 +449,6 @@ Status code distribution:
 Error distribution:
   [322] Post http://10.149.8.3:8008/v1/models/llama7b:predict: net/http: request canceled (Client.Timeout exceeded while awaiting headers)
 ~~~
-
 ~~~bash
    Device 0 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.00
  GPU 1155MHz MEM 1593MHz TEMP  40°C FAN N/A% POW  77 / 400 W
@@ -561,4 +560,25 @@ Device 0 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.000 k
  Device 7 [NVIDIA A100-SXM4-80GB] PCIe GEN 4@16x RX: 0.000 kB/s TX: 0.000 k
  GPU 1155MHz MEM 1593MHz TEMP  39°C FAN N/A% POW  76 / 400 W
  GPU[                               0%] MEM[||||                  11.1G/85.
- ~~~
+~~~
+
+### Model Profiling
+It is eager mode and CPU bound
+~~~bash
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        model_inference         7.69%     324.470ms       100.00%        4.220s        4.220s       0.000us         0.00%     282.523ms     282.523ms             1  
+                                           aten::matmul         0.67%      28.170ms        76.11%        3.212s     740.925us       0.000us         0.00%     160.789ms      37.091us          4335  
+                                               aten::mm         2.40%     101.320ms        74.15%        3.129s     927.222us     140.642ms        55.75%     153.719ms      45.546us          3375  
+                                           aten::linear         0.31%      13.231ms        75.55%        3.189s     944.743us       0.000us         0.00%     148.008ms      43.854us          3375  
+ampere_fp16_s16816gemm_fp16_64x64_sliced1x2_ldg8_f2f...         0.00%       0.000us         0.00%       0.000us       0.000us      82.609ms        32.75%      82.609ms      34.420us          2400  
+ampere_fp16_s16816gemm_fp16_64x64_ldg8_f2f_stages_64...         0.00%       0.000us         0.00%       0.000us       0.000us      51.785ms        20.53%      51.785ms      57.796us           896  
+                                              aten::mul         1.06%      44.682ms         1.60%      67.405ms      15.337us      23.853ms         9.46%      27.253ms       6.201us          4395  
+                                            aten::copy_         1.03%      43.572ms         3.78%     159.632ms      42.660us      18.298ms         7.25%      22.707ms       6.068us          3742  
+                                         aten::_to_copy         0.43%      18.082ms         5.21%     219.761ms      60.994us       0.000us         0.00%      22.079ms       6.128us          3603  
+                                               aten::to         0.13%       5.584ms         5.31%     223.898ms      15.811us       0.000us         0.00%      21.794ms       1.539us         14161  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 4.220s
+Self CUDA time total: 252.258ms
+~~~
