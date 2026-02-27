@@ -1,0 +1,53 @@
+title: Cloud AI Platform Architecture
+subtitle: "GCP / AWS / On-Prem — Software Block Diagram"
+
+layers:
+  - name: AI Agent Layer
+    blocks:
+      - text: "User Apps & Interfaces"
+        subtext: "Web / Mobile / CLI / SDK"
+      - text: "AI Agents"
+        subtext: "LangGraph / CrewAI / AutoGen"
+      - text: "Agent Orchestration"
+        subtext: "Planning / Routing / Memory"
+      - text: "Tool Registry"
+        subtext: "Function Calling / Connectors"
+      - text: "Memory & RAG Store"
+        subtext: "Vector DB / Cache / Retrieval"
+
+  - name: AI Platform Layer
+    blocks:
+      - text: "API Gateway"
+        subtext: "Auth / Rate Limit / Routing"
+      - text: "Model Registry"
+        subtext: "Versioning / Lineage / Catalog"
+      - text: "MLOps Pipeline"
+        subtext: "Training / Fine-tuning / RLHF"
+      - text: "Monitoring & Observability"
+        subtext: "Metrics / Logs / Traces"
+      - text: "Prompt Management"
+        subtext: "Templates / A-B Test / Guard"
+
+  - name: Inference Engine Layer
+    blocks:
+      - text: "vLLM / TensorRT-LLM"
+        subtext: "PagedAttention / CUDA Graphs"
+      - text: "Load Balancer"
+        subtext: "Least-Latency / Round-Robin"
+      - text: "Model Serving API"
+        subtext: "OpenAI-compat / gRPC / REST"
+      - text: "Auto-scaling Engine"
+        subtext: "HPA / KEDA / Queue-based"
+
+  - name: Infrastructure Layer
+    blocks:
+      - text: "GPU Cluster"
+        subtext: "H100 / A100 / MI300X"
+      - text: "Container Orchestration"
+        subtext: "Kubernetes / GPU Operator"
+      - text: "Object Storage"
+        subtext: "Model Weights / Datasets / Logs"
+      - text: "Network Fabric"
+        subtext: "InfiniBand / RDMA / VPC"
+      - text: "Secret & Config Mgmt"
+        subtext: "Vault / K8s Secrets / ConfigMap"
